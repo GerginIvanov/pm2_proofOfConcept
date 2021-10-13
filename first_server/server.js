@@ -9,6 +9,11 @@ app.get('/startSecond', (req, res) => {
   res.send('Second server listening on port 3001...');
 });
 
+app.get('/startThird', (req,res) => {
+  pm2.startServerThree();
+  res.send('Third server listening on port 3002...');
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
