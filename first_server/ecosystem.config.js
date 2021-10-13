@@ -1,6 +1,6 @@
 module.exports = {
     apps : [{
-      name   : "base server",
+      name   : "base_server",
       script : "./server.js"
     }]
   }

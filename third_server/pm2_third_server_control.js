@@ -11,11 +11,42 @@ function startServerThree() {
 
         pm2.start({
             script: '../third_server/server.js',
-            name: 'third server',
-        }, () => {
+            name: 'third_server',
+        }, (err) => {
+            console.error(err);
             pm2.disconnect();
         });
     });
 }
 
-module.exports = { startServerThree, };
+function stopServerThree() {
+    pm2.connect((err) => {
+        if (err) {
+            console.error(err);
+            process.exit(2);
+        }
+
+        pm2.stop('third_server', (err) => {
+            console.error(err);
+            pm2.disconnect();
+        }
+        );
+    });
+}
+
+function restartServerThree() {
+    pm2.connect((err) => {
+        if (err) {
+            console.error(err);
+            process.exit(2);
+        }
+
+        pm2.restart('third_server', (err) => {
+            console.error(err);
+            pm2.disconnect();
+        }
+        );
+    });
+}
+
+module.exports = { startServerThree, stopServerThree, restartServerThree, };
