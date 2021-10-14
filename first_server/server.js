@@ -5,14 +5,10 @@ const pm2_third_server_control = require('../third_server/pm2_third_server_contr
 const app = express();
 const port = 3000;
 
-// pm2_base_control.getBaseLogs()
-// .then(result => {
-//   res.send(result);
-//   res.end();
-// });
 
 app.get('/logs', (req, res) => {
-  console.log(pm2_base_control.getBaseLogs());
+  const logs = pm2_base_control.getBaseLogs();
+  res.send(logs);
   res.end();
 });
 
