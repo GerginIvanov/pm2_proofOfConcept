@@ -1,16 +1,25 @@
 const express = require('express');
-const pm2_base_control = require('./pm2_base_control');
-const pm2_second_server_control = require('../second_server/pm2_second_server_control');
-const pm2_third_server_control = require('../third_server/pm2_third_server_control');
 const app = express();
 const port = 3000;
 
+const WebSocket = require('ws');
+const server = require('http').Server(app);
+// const wss = new webSocket.Server({ server });
+
+const pm2_base_control = require('./pm2_base_control');
+const pm2_second_server_control = require('../second_server/pm2_second_server_control');
+const pm2_third_server_control = require('../third_server/pm2_third_server_control');
+
+
+
+//implement a socket here which send a response
+//response is sent each time a the function returns something
 
 app.get('/logs', (req, res) => {
-  const logs = pm2_base_control.getBaseLogs();
-  res.send(logs);
-  res.end();
+  pm2_base_control.getBaseLogs();
+  
 });
+
 
 
 
@@ -47,9 +56,6 @@ app.get('/restartThird', (req, res) => {
   res.send("Server three has been restarted.");
 });
 
-
-
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}...`);
 });
