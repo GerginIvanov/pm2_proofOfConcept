@@ -1,5 +1,7 @@
 const pm2 = require("pm2");
-
+const fs = require('fs');
+const outLogs = 'C:\Users/Gergi/.pm2/logs/third-server-out.log';
+const errorLogs = 'C:\Users/Gergi/.pm2/logs/third-server-error.log';
 
 function startServerThree() {
 
@@ -49,4 +51,23 @@ function restartServerThree() {
     });
 }
 
-module.exports = { startServerThree, stopServerThree, restartServerThree, };
+function deleteOutLogs() {
+    fs.truncate(outLogs, 0, () => {
+        console.log('Server out logs deleted!');
+    });
+}
+
+function deleteErrorLogs() {
+    fs.truncate(errorLogs, 0, () => {
+        console.log('Error logs deleted!');
+    });
+}
+
+
+module.exports = {
+    startServerThree,
+    stopServerThree,
+    restartServerThree,
+    deleteOutLogs,
+    deleteErrorLogs,
+};

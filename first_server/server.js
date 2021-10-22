@@ -1,28 +1,32 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-
-const WebSocket = require('ws');
 const server = require('http').Server(app);
-// const wss = new webSocket.Server({ server });
+const webSocket = require('ws');
+const wss = new webSocket.Server({ server });
 
 const pm2_base_control = require('./pm2_base_control');
 const pm2_second_server_control = require('../second_server/pm2_second_server_control');
 const pm2_third_server_control = require('../third_server/pm2_third_server_control');
 
-
-
 //implement a socket here which send a response
 //response is sent each time a the function returns something
-
 app.get('/logs', (req, res) => {
   pm2_base_control.getBaseLogs();
-  
+});
+
+app.get('/deleteOutLogsBase', (req, res) => {
+  pm2_base_control.deleteOutLogs();
+  res.send('logs deleted');
+});
+
+app.get('/deleteErrorLogsBase', (req, res) => {
+  pm2_base_control.deleteErrorLogs();
+  res.send('error logs deleted');
 });
 
 
-
-
+//second server routes
 app.get('/startSecond', (req, res) => {
   pm2_second_server_control.startServerTwo();
   res.send('Second server listening on port 3001...');
@@ -38,9 +42,18 @@ app.get('/restartSecond', (req, res) => {
   res.send("Server two has been restarted.");
 });
 
+app.get('/deleteOutLogsSecond', (req, res) => {
+  pm2_second_server_control.deleteOutLogs();
+  res.send('logs deleted');
+});
+
+app.get('/deleteErrorLogsSecond', (req, res) => {
+  pm2_second_server_control.deleteErrorLogs();
+  res.send('logs deleted');
+});
 
 
-
+//third server routes
 app.get('/startThird', (req, res) => {
   pm2_third_server_control.startServerThree();
   res.send('Third server listening on port 3002...');
@@ -55,6 +68,19 @@ app.get('/restartThird', (req, res) => {
   pm2_third_server_control.restartServerThree();
   res.send("Server three has been restarted.");
 });
+
+app.get('/deleteOutLogsThird', (req, res) => {
+  pm2_third_server_control.deleteOutLogs();
+  res.send('Out logs deleted');
+});
+
+app.get('/deleteErrorLogsThird', (req, res) => {
+  pm2_third_server_control.deleteErrorLogs();
+  res.send('Error logs deleted');
+});
+
+
+
 
 server.listen(port, () => {
   console.log(`Server listening on port ${port}...`);

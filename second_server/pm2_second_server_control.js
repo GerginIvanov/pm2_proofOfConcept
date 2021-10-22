@@ -1,4 +1,7 @@
 const pm2 = require('pm2');
+const fs = require('fs');
+const outLogs = 'C:\Users/Gergi/.pm2/logs/second-server-out.log';
+const errorLogs = 'C:\Users/Gergi/.pm2/logs/second-server-error.log';
 
 function startServerTwo() {
     pm2.connect((err) => {
@@ -27,8 +30,7 @@ function stopServerTwo() {
         pm2.stop('second_server', (err) => {
             console.error(err);
             pm2.disconnect();
-        }
-        );
+        });
     });
 }
 
@@ -42,9 +44,26 @@ function restartServerTwo() {
         pm2.restart('second_server', (err) => {
             console.error(err);
             pm2.disconnect();
-        }
-        );
+        });
     });
 }
 
-module.exports = { startServerTwo, stopServerTwo, restartServerTwo, };
+function deleteOutLogs() {
+    fs.truncate(outLogs, 0, () => {
+        console.log('Server out logs deleted!');
+    });
+}
+
+function deleteErrorLogs() {
+    fs.truncate(errorLogs, 0, () => {
+        console.log('Error logs deleted!');
+    });
+}
+
+module.exports = {
+    startServerTwo,
+    stopServerTwo,
+    restartServerTwo,
+    deleteOutLogs,
+    deleteErrorLogs,
+};
