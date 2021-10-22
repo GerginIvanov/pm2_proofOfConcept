@@ -30,5 +30,3 @@ module.exports = {
     deleteOutLogs,
     deleteErrorLogs,
 };
-
-// nagawaka- blue, 37people - 7, walkingtoo
