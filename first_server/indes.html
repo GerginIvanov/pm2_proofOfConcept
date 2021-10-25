@@ -16,7 +16,7 @@
         const ws = new WebSocket("ws://localhost:3000/logs");
 
         ws.addEventListener('open', () => {
-            console.log("Socket connection");
+            console.log("We are connected!");
         });
 
         ws.addEventListener('message', e => {

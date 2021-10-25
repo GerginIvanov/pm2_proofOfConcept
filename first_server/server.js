@@ -8,20 +8,27 @@ const pm2_base_control = require('./pm2_base_control');
 const pm2_second_server_control = require('../second_server/pm2_second_server_control');
 const pm2_third_server_control = require('../third_server/pm2_third_server_control');
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server, path: "/logs" });
+
+
+wss.on('connection', ws => {
+  console.log("New client connected!");
+
+
+  ws.on('close', () => {
+    console.log("Client has disconnected!");
+  });
+});
+
 
 
 //implement a socket here which send a response
 //response is sent each time a the function returns something
-app.get('/logs', (req, res) => {
-  // const result = pm2_base_control.getBaseLogs();
+// app.get('/logs', (req, res) => {
+//   // const result = pm2_base_control.getBaseLogs();
 
-  wss.on('connection', function connection(ws) {
-    console.log("New client connection");
-    ws.send("Server message");
-  });
- 
-});
+  
+// });
 
 app.get('/deleteOutLogsBase', (req, res) => {
   pm2_base_control.deleteOutLogs();
