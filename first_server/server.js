@@ -15,22 +15,9 @@ const outLogs = 'C:\Users/Gergi/.pm2/logs/base-server-out.log';
 
 
 wss.on('connection', ws => {
-  console.log("New client connected!");
 
-  // pm2_base_control.getBaseLogs(ws);
+  pm2_base_control.getBaseLogs(ws);
 
-  fs.watch(outLogs, 'utf8', (eventType, filename) => {
-    if (filename) {
-        const newContents = fs.readFileSync(outLogs, "utf-8");
-        console.log(newContents);
-        ws.send(newContents);
-        // return newContents;
-    }
-});
-
-  ws.on('close', () => {
-    console.log("Client has disconnected!");
-  });
 });
 
 
