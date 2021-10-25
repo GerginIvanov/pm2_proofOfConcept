@@ -2,17 +2,25 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const server = require('http').Server(app);
-const webSocket = require('ws');
-const wss = new webSocket.Server({ server });
+const WebSocket = require('ws');
 
 const pm2_base_control = require('./pm2_base_control');
 const pm2_second_server_control = require('../second_server/pm2_second_server_control');
 const pm2_third_server_control = require('../third_server/pm2_third_server_control');
 
+const wss = new WebSocket.Server({ server });
+
+
 //implement a socket here which send a response
 //response is sent each time a the function returns something
 app.get('/logs', (req, res) => {
-  pm2_base_control.getBaseLogs();
+  // const result = pm2_base_control.getBaseLogs();
+
+  wss.on('connection', function connection(ws) {
+    console.log("New client connection");
+    ws.send("Server message");
+  });
+ 
 });
 
 app.get('/deleteOutLogsBase', (req, res) => {
