@@ -2,33 +2,44 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const server = require('http').Server(app);
-const WebSocket = require('ws');
 
 const pm2_base_control = require('./pm2_base_control');
 const pm2_second_server_control = require('../second_server/pm2_second_server_control');
 const pm2_third_server_control = require('../third_server/pm2_third_server_control');
 
-const wss = new WebSocket.Server({ server, path: "/logs" });
+const WebSocket = require('ws');
+const url = require('url');
+const wss_outLogs = new WebSocket.Server({ noServer: true });
+const wss_errorLogs = new WebSocket.Server({ noServer: true });
 
-const fs = require('fs');
-const outLogs = 'C:\Users/Gergi/.pm2/logs/base-server-out.log';
 
-
-wss.on('connection', ws => {
-
+wss_outLogs.on('connection', ws => {
+  console.log('Client has connected!');
   pm2_base_control.getBaseLogs(ws);
+});
+
+wss_errorLogs.on('connection', ws => {
+  console.log('Client has connected!');
+  pm2_base_control.getErrorLogs(ws);
+});
+
+server.on('upgrade', upgrade = (request, socket, head) => {
+  const pathname = url.parse(request.url);
+
+  if (pathname.pathname === '/outLogs') {
+    wss_outLogs.handleUpgrade(request, socket, head, function done(ws) {
+      wss_outLogs.emit('connection', ws, request);
+    });
+  } else if (pathname.pathname === '/errorLogs') {
+    wss_errorLogs.handleUpgrade(request, socket, head, function done(ws) {
+      wss_errorLogs.emit('connection', ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
 
 });
 
-
-
-//implement a socket here which send a response
-//response is sent each time a the function returns something
-// app.get('/logs', (req, res) => {
-//   // const result = pm2_base_control.getBaseLogs();
-
-  
-// });
 
 app.get('/deleteOutLogsBase', (req, res) => {
   pm2_base_control.deleteOutLogs();
