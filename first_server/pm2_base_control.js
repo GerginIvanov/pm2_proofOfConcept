@@ -1,3 +1,4 @@
+const pm2 = require('pm2');
 const fs = require('fs');
 const outLogs = 'C:\Users/Gergi/.pm2/logs/base-server-out.log';
 const errorLogs = 'C:\Users/Gergi/.pm2/logs/base-server-error.log';
@@ -30,6 +31,22 @@ function getErrorLogs(ws) {
     });
 }
 
+function monitor() {
+    pm2.connect((err) => {
+        if (err) {
+            console.error(err);
+            process.exit(2);
+        }
+
+        pm2.describe("base_server", (err, data) => {
+            if (err) {
+                console.error(err);
+                pm2.disconnect();
+            }
+        });
+    });
+}
+
 function deleteOutLogs() {
     fs.truncate(outLogs, 0, () => {
         console.log('Server out logs deleted!');
@@ -47,4 +64,5 @@ module.exports = {
     getErrorLogs,
     deleteOutLogs,
     deleteErrorLogs,
+    monitor,
 };

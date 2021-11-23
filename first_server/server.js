@@ -3,6 +3,7 @@ const app = express();
 const port = 3000;
 const server = require('http').Server(app);
 
+const pm2 = require('pm2');
 const pm2_base_control = require('./pm2_base_control');
 const pm2_second_server_control = require('../second_server/pm2_second_server_control');
 const pm2_third_server_control = require('../third_server/pm2_third_server_control');
@@ -40,6 +41,23 @@ server.on('upgrade', upgrade = (request, socket, head) => {
 
 });
 
+app.get('/monitor', (req, res) => {
+  pm2.connect((err) => {
+    if (err) {
+      console.error(err);
+      process.exit(2);
+    }
+
+    pm2.describe('base_server', (err, data) => {
+      if(err){
+        console.log(err);
+      }
+      res.send(data);
+    });
+  });
+
+
+});
 
 app.get('/deleteOutLogsBase', (req, res) => {
   pm2_base_control.deleteOutLogs();
